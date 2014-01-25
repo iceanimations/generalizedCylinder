@@ -7,7 +7,6 @@
 __all__ = ['generalizedCylinder']
 
 import pymel.core as pc
-
 import re
 _pattern = re.compile(r'(.*?)(\d+)$')
 
@@ -110,7 +109,7 @@ def generalizedCylinder(curve, name="generalizedCylinder1", parent='|',
 
     # create stroke
     strokeShape = pc.createNode('stroke', n=name+'StrokeShape'+str(num), p=mesh)
-    strokeShape.pathCurve[0].samples.set( round(samplesPerLength * curve.length()) )
+    strokeShape.pathCurve[0].samples.set(round(samplesPerLength*curve.length()))
     strokeShape.drawAsMesh.set(True)
     strokeShape.displayPercent.set(100)
     strokeShape.meshQuadOutput.set(True)
