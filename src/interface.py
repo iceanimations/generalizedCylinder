@@ -33,6 +33,9 @@ class Window(Form, Base):
         print selection
         curves = gc.pc.ls(sl = selection, type = 'nurbsCurve',
                           dag = True, geometry = True)
+        for curve in curves:
+            if type(curve) != gc.pc.nt.NurbsCurve:
+                curves.remove(curve)
         if not curves:
             if selection:
                 gc.pc.warning("No curve selected")
