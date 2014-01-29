@@ -1,3 +1,9 @@
+'''
+:file: generalizedCylinder.py
+
+* TODO: speedup UV adjustment
+
+'''
 import pymel.core as pc
 
 import re
@@ -7,24 +13,16 @@ _pattern = re.compile(r'(.*?)(\d+)$')
 def getContainingEdges(faces):
     ''' Given the faces of a mesh get all the surrounding Edges
     :type Mesh: pymel.core.nt.Mesh()
-    :rtype: list of pymel.MeshEdge()
+    :rtype: list of strings of pymel.MeshEdge()
     '''
-    edges = pc.polyListComponentConversion(faces, ff=1, te=1)
-    containedEdges = pc.polyListComponentConversion(faces, ff=1, te=1,
-            internal=1)
-    sel_list = pc.ls(sl=1)
-    pc.select(edges, r=1)
-    pc.select(containedEdges, tgl=1)
-    containingEdges = pc.ls(sl=1)
-    pc.select(sel_list, r=1)
-    return containingEdges
+    return pc.polyListComponentConversion(face, ff, te=1, bo=1)
 
 
 def expandUV(faces):
-    """Given the mesh and faces Expand the v-range to [0,1]
+    ''' Given the mesh and faces Expand the v-range to [0,1]
     :type mesh: pymel.core.nt.Mesh()
     :type faces: list of pymel.MeshFace()
-    """
+    '''
     maps = [pc.MeshUV(m) for m in pc.polyListComponentConversion(faces, ff=1,
         tuv=1)]
     uv_ids = []
@@ -35,6 +33,26 @@ def expandUV(faces):
     low, hi = sorted_ids[:len(sorted_ids)/2], sorted_ids[len(sorted_ids)/2:]
     pc.polyEditUV([meshShape.map[l] for l in low], v=0, r=False)
     pc.polyEditUV([meshShape.map[h] for h in hi], v=1, r=False)
+
+
+def expandAllUV(faces):
+    ''' Given the faces of return UVs in two separate lists of hi and low and
+    then map low to v=0, hi to v=1 '''
+    hi = []
+    low = []
+    meshShape = pc.nt.Mesh( pc.polyListComponentConversion(faces[0])[0] )
+    for f in faces:
+        maps = [pc.MeshUV(m) for m in pc.polyListComponentConversion(f,
+            ff=1, tuv=1)]
+        uv_ids = []
+        for m in maps:
+            uv_ids.extend(m.indices())
+        sorted_ids = sorted(uv_ids, key = lambda x:meshShape.getUV(x)[1])
+        half = len(sorted_ids)/2
+        low.extend(sorted_ids[:half])
+        hi.extend(sorted_ids[half:])
+    pc.polyEditUV([meshShape.map[l] for l in low ], v=0, r=False)
+    pc.polyEditUV([meshShape.map[h] for h in hi  ], v=1, r=False)
 
 
 def adjustCylinderUVs(mesh, uvset="map1", tubeSections=4, startIndex=0,
@@ -57,14 +75,19 @@ def adjustCylinderUVs(mesh, uvset="map1", tubeSections=4, startIndex=0,
     faces = []
     for vt in range(startIndex, nf-endIndex, tubeSections):
         faces.append(meshShape.f[vt:vt+tubeSections-1])
-        edges.extend(getContainingEdges(faces[-1]))
+        #edges.extend(getContainingEdges(faces[-1]))
+    edges = [meshShape.e[0:tubeSections]]
+    for i in range(tubeSections):
+        edges.append(meshShape.e[tubeSections+i::8])
     pc.polyMapCut(edges)
-    for f in faces:
-        expandUV(f)
+    #for f in faces:
+        #expandUV(f)
+    expandAllUV(faces)
 
 
-def generalizedCylinder(curve, brush=None, samplesPerLength=2, tubeSections=4,
-        twistRate=0.5, brushWidth=0.5):
+def generalizedCylinder(curve, name="generalizedCylinder1", samplesPerLength=2,
+        tubeSections=4, twistRate=0.5, brushWidth=0.5, rebuildSpansMult = 4,
+        adjustUVs=True, closeEnds=True):
     ''' Generate paintEffects Cylinder over ``curve``
 
     :type curve: pymel.core.nt.NurbsCurve()
@@ -75,10 +98,14 @@ def generalizedCylinder(curve, brush=None, samplesPerLength=2, tubeSections=4,
     :rtype: (pymel.core.nt.Mesh(), pymel.core.nt.Stroke())
     '''
     # create the main transform
-    mesh = pc.createNode('transform', n='generalizeCylinder1')
+    mesh = pc.createNode('transform', n=name)
     match = _pattern.match(str(mesh))
-    name = match.group(1)
-    num = match.group(2)
+    if not match:
+        num = ""
+        name = name.split("|")[-1]
+    else:
+        name = match.group(1).split("|")[-1]
+        num = match.group(2)
 
     # create stroke
     strokeShape = pc.createNode('stroke', n=name+'StrokeShape'+str(num), p=mesh)
@@ -91,13 +118,7 @@ def generalizedCylinder(curve, brush=None, samplesPerLength=2, tubeSections=4,
     strokeShape.io.set(True)
 
     # create brush
-    if not brush:
-        brush = pc.createNode('brush', n=name+'Brush'+str(num))
-    else:
-        try:
-            brush = pc.nt.Brush(brush)
-        except TypeError:
-            brush = pc.createNode('brush', n=name+'Brush'+str(num))
+    brush = pc.createNode('brush', n=name+'Brush'+str(num))
     brush.tubeSections.set(tubeSections)
     brush.twistRate.set(twistRate)
     brush.brushWidth.set(brushWidth)
@@ -114,7 +135,7 @@ def generalizedCylinder(curve, brush=None, samplesPerLength=2, tubeSections=4,
     rebuildCurve.kcp.set(0)
     rebuildCurve.kep.set(1)
     rebuildCurve.kt.set(0)
-    rebuildCurve.s.set(curve.spans.get() * 4)
+    rebuildCurve.s.set(curve.spans.get() * rebuildSpansMult)
     rebuildCurve.d.set(3)
     rebuildCurve.tol.set(0.01)
 
@@ -127,23 +148,31 @@ def generalizedCylinder(curve, brush=None, samplesPerLength=2, tubeSections=4,
     strokeShape.outMainMesh >> meshShape.inMesh
 
     # adjust UVs and assign default shader
-    adjustCylinderUVs(mesh, tubeSections=tubeSections)
+    if adjustUVs:
+        adjustCylinderUVs(mesh, tubeSections=tubeSections)
+
     pc.sets("initialShadingGroup", e=1, forceElement=meshShape)
 
     # close the ends of the cylinder
-    pc.polyCloseBorder(mesh, ch=1);
-    tf = mesh.numFaces()
-    startFace, endFace = mesh.f[tf-1], mesh.f[tf-2]
-    pc.polyExtrudeFacet(endFace, constructionHistory=1,
-            keepFacesTogether=1, divisions=2, twist=0, taper=1, off=0,
-            thickness=0, smoothingAngle=30);
-    pc.polyExtrudeFacet(startFace, constructionHistory=1,
-            keepFacesTogether=1, divisions=2, twist=0, taper=1, off=0,
-            thickness=0, smoothingAngle=30);
+    if closeEnds:
+        pc.polyCloseBorder(mesh, ch=1);
+        tf = mesh.numFaces()
+        startFace, endFace = mesh.f[tf-1], mesh.f[tf-2]
+        pc.polyExtrudeFacet(endFace, constructionHistory=1,
+                keepFacesTogether=1, divisions=2, twist=0, taper=1, off=0,
+                thickness=0, smoothingAngle=30);
+        pc.polyExtrudeFacet(startFace, constructionHistory=1,
+                keepFacesTogether=1, divisions=2, twist=0, taper=1, off=0,
+                thickness=0, smoothingAngle=30);
 
     return mesh
 
-if __name__ == '__main__':
-    for i in pc.ls(type='nurbsCurve'):
-        generalizedCylinder(i, tubeSections=4)
 
+def main():
+    for i in pc.ls(type='nurbsCurve'):
+        generalizedCylinder(i, tubeSections=4, adjustUVs=True, closeEnds=False)
+
+
+if __name__ == '__main__':
+    import cProfile
+    cProfile.run('main()')
