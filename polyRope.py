@@ -1,7 +1,7 @@
 import pymel.core as pc
 from generalizedCylinder import generalizedCylinder, _pattern
 
-def polyRope(curve, name='polyRope1',
+def polyRope(curve, name='polyRope1', parent="|",
         midSamplesPerLength=2.,midTwistRate=2., midWidth=0.75,
         midRebuildSpansMult = 4, midAdjustUVs = True, midCloseEnds=True,
         numSideCyls = 4, showMidCylinder=1,
@@ -74,15 +74,16 @@ def polyRope(curve, name='polyRope1',
         sideCyls.append(sc)
 
 def _main_():
-    """test the polyRopeFucntion on all curves in a maya scene
+    """test the polyRope function on all selected curves in a maya scene
     :returns: None
     """
-    ncs = pc.ls(type='nurbsCurve', sl=1)
-    mpb = pc.ui.MainProgressBar(0, len(ncs))
+    ncs = pc.ls(type='nurbsCurve', sl=1, dag=1)
+    mpb = pc.ui.MainProgressBar(0, len(ncs), interruptable=True)
+    mpb.setStatus("Making Ropes from %d Curves ... Press Esc to Stop" %len(ncs))
     mpb.beginProgress()
     for i in ncs:
         if mpb.getIsCancelled(): break
-        polyRope(i)
+        polyRope(i, midSamplesPerLength=1., sideSamplesPerLength=1.)
         if mpb.getIsCancelled(): break
         mpb.step()
     mpb.endProgress()
