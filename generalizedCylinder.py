@@ -4,6 +4,8 @@
 * TODO: speedup UV adjustment
 
 '''
+__all__ = ['generalizedCylinder']
+
 import pymel.core as pc
 
 import re
@@ -80,12 +82,11 @@ def adjustCylinderUVs(mesh, uvset="map1", tubeSections=4, startIndex=0,
     for i in range(tubeSections):
         edges.append(meshShape.e[tubeSections+i::8])
     pc.polyMapCut(edges)
-    #for f in faces:
-        #expandUV(f)
     expandAllUV(faces)
 
 
-def generalizedCylinder(curve, name="generalizedCylinder1", samplesPerLength=2,
+def generalizedCylinder(curve, name="generalizedCylinder1", parent='|',
+        samplesPerLength=2,
         tubeSections=4, twistRate=0.5, brushWidth=0.5, rebuildSpansMult = 4,
         adjustUVs=True, closeEnds=True):
     ''' Generate paintEffects Cylinder over ``curve``
@@ -98,7 +99,7 @@ def generalizedCylinder(curve, name="generalizedCylinder1", samplesPerLength=2,
     :rtype: (pymel.core.nt.Mesh(), pymel.core.nt.Stroke())
     '''
     # create the main transform
-    mesh = pc.createNode('transform', n=name)
+    mesh = pc.createNode('transform', n=name, parent=parent)
     match = _pattern.match(str(mesh))
     if not match:
         num = ""
@@ -165,14 +166,15 @@ def generalizedCylinder(curve, name="generalizedCylinder1", samplesPerLength=2,
                 keepFacesTogether=1, divisions=2, twist=0, taper=1, off=0,
                 thickness=0, smoothingAngle=30);
 
+    pc.select(mesh, r=True)
     return mesh
 
 
-def main():
+def _main_():
     for i in pc.ls(type='nurbsCurve'):
         generalizedCylinder(i, tubeSections=4, adjustUVs=True, closeEnds=False)
 
 
 if __name__ == '__main__':
     import cProfile
-    cProfile.run('main()')
+    cProfile.run('_main()_')
