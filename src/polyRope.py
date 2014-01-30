@@ -9,7 +9,7 @@ def polyRope(curve, name='polyRope1', parent="|",
         sideRebuildSpansMult = 4, sideAdjustUVs = True, sideCloseEnds=True,
         sideTubeSections = 4):
     ''' create a polyRope with one mid cylinder and some sideCylinders '''
-    maingrp = pc.createNode('transform', n=name)
+    maingrp = pc.createNode('transform', n=name, parent = parent)
     maingrp.addAttr("midWidth", at="float", dv=midWidth, k=True)
     maingrp.addAttr("midTwistRate", at="float", dv=midTwistRate, k=True)
     maingrp.addAttr("sideWidth", at="float", dv=sideWidth, k=True)
