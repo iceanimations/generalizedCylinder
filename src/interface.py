@@ -23,20 +23,28 @@ class Window(Form, Base):
         self.setupUi(self)
         
         self.twistRateBox.setValue(0.5)
+        self.curves = []
+        self.stop = False
+        self.progressBar.hide()
+        self.stopButton.hide()
         
         #connections
         self.createButton.clicked.connect(self.create)
         self.resetButton.clicked.connect(self.reset)
+        self.stopButton.clicked.connect(self.setStop)
+        
+    def setStop(self):
+        self.stop = True
         
     def create(self):
         selection = self.selectionButton.isChecked()
         print selection
-        curves = gc.pc.ls(sl = selection, type = 'nurbsCurve',
+        self.curves[:] = gc.pc.ls(sl = selection, type = 'nurbsCurve',
                           dag = True, geometry = True)
-        for curve in curves:
+        for curve in self.curves:
             if type(curve) != gc.pc.nt.NurbsCurve:
-                curves.remove(curve)
-        if not curves:
+                self.curves.remove(curve)
+        if not self.curves:
             if selection:
                 gc.pc.warning("No curve selected")
             else:
@@ -46,11 +54,27 @@ class Window(Form, Base):
         sections = int(self.tubeSectionsBox.value())
         tRate = float(self.twistRateBox.value())
         bWidth = float(self.brushWidthBox.value())
-        for curve in curves:
+        self.progressBar.setMaximum(len(self.curves))
+        self.progressBar.show()
+        self.stopButton.show()
+        self.createButton.hide()
+        qApp.processEvents()
+        done = []
+        for curve in self.curves:
             gc.generalizedCylinder(curve, samplesPerLength=samples,
                                    tubeSections=sections,
                                    twistRate=tRate,
                                    brushWidth=bWidth)
+            done.append(curve)
+            self.progressBar.setValue(len(done))
+            qApp.processEvents()
+            if self.stop:
+                self.stop = False
+                break
+        self.stopButton.hide()
+        self.createButton.show()
+        qApp.processEvents()
+            
     
     def reset(self):
         self.selectionButton.setChecked(True)
