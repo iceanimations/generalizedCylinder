@@ -49,7 +49,7 @@ class Window(Form, Base):
             else:
                 gc.pc.warning("No curve found in the scene")
             return
-        samples = int(self.samplesPerLengthBox.value())
+        samples = float(self.samplesPerLengthBox.value())
         sections = int(self.tubeSectionsBox.value())
         tRate = float(self.twistRateBox.value())
         bWidth = float(self.brushWidthBox.value())

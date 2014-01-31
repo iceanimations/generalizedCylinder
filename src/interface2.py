@@ -54,7 +54,7 @@ class Window(Form, Base):
         qApp.processEvents()
         done = []
         for curve in curves:
-            pr.polyRope(curve, midSamplesPerLength=int(self.samplesPerLengthBox.value()),
+            pr.polyRope(curve, midSamplesPerLength=float(self.samplesPerLengthBox.value()),
                         midTwistRate=float(self.twistRateBox.value()),
                         midWidth=float(self.brushWidthBox.value()),
                         midRebuildSpansMult = 4,
@@ -62,7 +62,7 @@ class Window(Form, Base):
                         midCloseEnds=self.closeEndsButton.isChecked(),
                         numSideCyls=int(self.numOfCylindersBox.value()),
                         showMidCylinder=int(self.showButton.isChecked()),
-                        sideSamplesPerLength=int(self.samplesPerLengthBox2.value()),
+                        sideSamplesPerLength=float(self.samplesPerLengthBox2.value()),
                         sideTwistRate=float(self.twistRateBox2.value()),
                         sideWidth=float(self.widthBox.value()),
                         sideRebuildSpansMult=4,
