@@ -1,10 +1,10 @@
 import pymel.core as pc
-from generalizedCylinder import generalizedCylinder, _pattern
+#from generalizedCylinder import generalizedCylinder, _pattern
 
 def polyRope(curve, name='polyRope1', parent="|",
         midSamplesPerLength=2.,midTwistRate=2., midWidth=0.75,
         midRebuildSpansMult = 4, midAdjustUVs = True, midCloseEnds=True,
-        numSideCyls = 4, showMidCylinder=1,
+        numSideCyls = 4, showMidCylinder=1, dispCV=True,
         sideSamplesPerLength=2., sideTwistRate=1., sideWidth=0.5,
         sideRebuildSpansMult = 4, sideAdjustUVs = True, sideCloseEnds=True,
         sideTubeSections = 4):
@@ -33,7 +33,7 @@ def polyRope(curve, name='polyRope1', parent="|",
             samplesPerLength=midSamplesPerLength, tubeSections=numSideCyls,
             twistRate=midTwistRate, brushWidth=midWidth,
             rebuildSpansMult=midRebuildSpansMult, adjustUVs=midAdjustUVs,
-            closeEnds=midCloseEnds)
+            closeEnds=midCloseEnds, dispCV=dispCV)
     maingrp.midWidth >> midCyl.width
     maingrp.midTwistRate >> midCyl.twistRate
     maingrp.showMidCylinder >> midCyl.v

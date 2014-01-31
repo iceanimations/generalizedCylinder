@@ -87,7 +87,7 @@ def adjustCylinderUVs(mesh, uvset="map1", tubeSections=4, startIndex=0,
 def generalizedCylinder(curve, name="generalizedCylinder1", parent='|',
         samplesPerLength=2,
         tubeSections=4, twistRate=0.5, brushWidth=0.5, rebuildSpansMult = 4,
-        adjustUVs=True, closeEnds=True):
+        adjustUVs=True, closeEnds=True, dispCV=False):
     ''' Generate paintEffects Cylinder over ``curve``
 
     :type curve: pymel.core.nt.NurbsCurve()
@@ -140,6 +140,7 @@ def generalizedCylinder(curve, name="generalizedCylinder1", parent='|',
     rebuildCurve.tol.set(0.01)
 
     # make the connections
+    curve.dispCV.set(dispCV)
     curve.worldSpace[curve.instanceNumber()] >> rebuildCurve.ic
     rebuildCurve.oc >> strokeShape.pathCurve[0].curve
     mesh.width >> brush.brushWidth
@@ -171,7 +172,8 @@ def generalizedCylinder(curve, name="generalizedCylinder1", parent='|',
 
 def _main_():
     for i in pc.ls(type='nurbsCurve'):
-        generalizedCylinder(i, tubeSections=5, adjustUVs=True, closeEnds=False)
+        generalizedCylinder(i, tubeSections=8, adjustUVs=True, closeEnds=False,
+                dispCV=True)
 
 
 if __name__ == '__main__':
