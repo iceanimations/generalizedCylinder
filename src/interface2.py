@@ -14,7 +14,7 @@ import polyRope as pr
 selfPath = sys.modules[__name__].__file__
 rootPath = osp.dirname(osp.dirname(selfPath))
 uiPath = osp.join(rootPath, 'ui')
-uiFile = osp.join(uiPath, 'window.ui')
+uiFile = osp.join(uiPath, 'window2.ui')
 
 Form, Base = uic.loadUiType(uiFile)
 class Window(Form, Base):
@@ -54,9 +54,9 @@ class Window(Form, Base):
         qApp.processEvents()
         done = []
         for curve in curves:
-            pr.polyRope(curve, midSamplesPerLength=int(self.samplesPerlengthBox.value()),
+            pr.polyRope(curve, midSamplesPerLength=int(self.samplesPerLengthBox.value()),
                         midTwistRate=float(self.twistRateBox.value()),
-                        midWidth=float(brushWidthBox.value()),
+                        midWidth=float(self.brushWidthBox.value()),
                         midRebuildSpansMult = 4,
                         midAdjustUVs=self.adjustUVsButton.isChecked(),
                         midCloseEnds=self.closeEndsButton.isChecked(),
@@ -64,7 +64,7 @@ class Window(Form, Base):
                         showMidCylinder=int(self.showButton.isChecked()),
                         sideSamplesPerLength=int(self.samplesPerLengthBox2.value()),
                         sideTwistRate=float(self.twistRateBox2.value()),
-                        sideWidth=float(widthBox.value()),
+                        sideWidth=float(self.widthBox.value()),
                         sideRebuildSpansMult=4,
                         sideAdjustUVs=self.adjustUVsButton2.isChecked(),
                         sideCloseEnds=self.closeEndsButton2.isChecked(),
