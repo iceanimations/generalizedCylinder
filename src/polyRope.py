@@ -40,7 +40,9 @@ def polyRope(curve, name='polyRope1', parent="|",
     midCylShape = midCyl.getShape(type='mesh')
 
     curves_grp = pc.createNode('transform',n=name+num+'CurvesGrp', p=maingrp)
+    curves_grp.it.set(False)
     side_cyl_grp = pc.createNode('transform',n=name+num+'SideCylindersGrp', p=maingrp)
+    curves_grp.it.set(False)
 
     sideCyls = []
     # funk you ... creating all the side cylinders
@@ -55,6 +57,7 @@ def polyRope(curve, name='polyRope1', parent="|",
             cfme.ei[i].set(e)
         elc = pc.createNode('transform', n=name+num+'EdgeLoopCurve'+str(scn),
                 p=curves_grp)
+        elc.it.set(False)
         elcShape = pc.createNode('nurbsCurve', 
                 n=name+num+'EdgeLoopCurveShape'+str(scn), p=elc)
         dc = pc.createNode('detachCurve', n=name+num+'EdgeLoopDetachCurve1')
@@ -87,6 +90,7 @@ def _main_():
         if mpb.getIsCancelled(): break
         mpb.step()
     mpb.endProgress()
+
 
 if __name__ == '__main__':
     _main_()
