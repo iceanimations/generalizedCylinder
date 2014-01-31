@@ -21,23 +21,23 @@ class Window(Form, Base):
     def __init__(self, parent = qtfy.getMayaWindow()):
         super(Window, self).__init__(parent)
         self.setupUi(self)
-        
+
         self.stop = False
         self.progressBar.hide()
         self.stopButton.hide()
-        
+
         #connections
         self.createButton.clicked.connect(self.create)
         self.resetButton.clicked.connect(self.reset)
         self.stopButton.clicked.connect(self.setStop)
-        
+
     def setStop(self):
         self.stop = True
-        
+
     def create(self):
         selection = self.selectionButton.isChecked()
-        curves = pr.pc.ls(sl = selection, type = 'nurbsCurve',
-                          dag = True, geometry = True)
+        curves = pr.pc.ls(sl = selection, type = 'nurbsCurve', dag = True,
+                geometry = True)
         for curve in curves:
             if type(curve) != pr.pc.nt.NurbsCurve:
                 curves.remove(curve)
@@ -79,8 +79,8 @@ class Window(Form, Base):
         self.createButton.show()
         self.progressBar.hide()
         qApp.processEvents()
-            
-    
+
+
     def reset(self):
         self.selectionButton.setChecked(True)
         self.samplesPerLengthBox.setValue(2)
@@ -89,7 +89,7 @@ class Window(Form, Base):
         self.adjustUVsButton.setChecked(True)
         self.closeEndsButton.setChecked(True)
         self.showButton.setChecked(False)
-        
+
         self.numOfCylindersBox.setValue(4)
         self.samplesPerLengthBox2.setValue(2)
         self.sectionsBox.setValue(4)

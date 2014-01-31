@@ -16,7 +16,7 @@ def getContainingEdges(faces):
     :type Mesh: pymel.core.nt.Mesh()
     :rtype: list of strings of pymel.MeshEdge()
     '''
-    return pc.polyListComponentConversion(face, ff, te=1, bo=1)
+    return pc.polyListComponentConversion(faces, ff=1, te=1, bo=1)
 
 
 def expandUV(faces):
@@ -79,7 +79,7 @@ def adjustCylinderUVs(mesh, uvset="map1", tubeSections=4, startIndex=0,
         #edges.extend(getContainingEdges(faces[-1]))
     edges = [meshShape.e[0:tubeSections]]
     for i in range(tubeSections):
-        edges.append(meshShape.e[tubeSections+i::8])
+        edges.append(meshShape.e[tubeSections+i::tubeSections*2])
     pc.polyMapCut(edges)
     expandAllUV(faces)
 
@@ -171,9 +171,9 @@ def generalizedCylinder(curve, name="generalizedCylinder1", parent='|',
 
 def _main_():
     for i in pc.ls(type='nurbsCurve'):
-        generalizedCylinder(i, tubeSections=4, adjustUVs=True, closeEnds=False)
+        generalizedCylinder(i, tubeSections=5, adjustUVs=True, closeEnds=False)
 
 
 if __name__ == '__main__':
     import cProfile
-    cProfile.run('_main()_')
+    cProfile.run('_main_()')
