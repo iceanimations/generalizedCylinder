@@ -38,7 +38,6 @@ class Window(Form, Base):
         
     def create(self):
         selection = self.selectionButton.isChecked()
-        print selection
         self.curves[:] = gc.pc.ls(sl = selection, type = 'nurbsCurve',
                           dag = True, geometry = True)
         for curve in self.curves:
@@ -73,6 +72,7 @@ class Window(Form, Base):
                 break
         self.stopButton.hide()
         self.createButton.show()
+        self.progressBar.hide()
         qApp.processEvents()
             
     
