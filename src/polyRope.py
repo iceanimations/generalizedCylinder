@@ -1,5 +1,5 @@
 import pymel.core as pc
-#from generalizedCylinder import generalizedCylinder, _pattern
+from generalizedCylinder import generalizedCylinder, _pattern
 
 def polyRope(curve, name='polyRope1', parent="|",
         midSamplesPerLength=2.,midTwistRate=2., midWidth=0.75,
