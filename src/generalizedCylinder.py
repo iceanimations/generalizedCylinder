@@ -10,6 +10,8 @@ import pymel.core as pc
 import re
 _pattern = re.compile(r'(.*?)(\d+)$')
 
+from curveControlLocs import addCurveControlLocs
+
 
 def getContainingEdges(faces):
     ''' Given the faces of a mesh get all the surrounding Edges
@@ -85,7 +87,7 @@ def adjustCylinderUVs(mesh, uvset="map1", tubeSections=4, startIndex=0,
 
 
 def generalizedCylinder(curve, name="generalizedCylinder1", parent='|',
-        samplesPerLength=2,
+        addControls=False, samplesPerLength=2,
         tubeSections=4, twistRate=0.5, brushWidth=0.5, rebuildSpansMult = 4,
         adjustUVs=True, closeEnds=True, dispCV=False):
     ''' Generate paintEffects Cylinder over ``curve``
@@ -106,6 +108,9 @@ def generalizedCylinder(curve, name="generalizedCylinder1", parent='|',
     else:
         name = match.group(1).split("|")[-1]
         num = match.group(2)
+
+    if addControls:
+        _, curve = addCurveControlLocs(curve)
 
     # create stroke
     strokeShape = pc.createNode('stroke', n=name+'StrokeShape'+str(num), p=mesh)

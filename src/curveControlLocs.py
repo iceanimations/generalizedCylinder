@@ -1,6 +1,9 @@
 import pymel.core as pc
 
 
+__all__ = ['addCurveControlLocs']
+
+
 def addCurveControlLocs(curveShape1):
     """Add curve Control locators to that curvy (or straight) thing
     :type curveShape1: pymel.core.nt.NurbsCurve()

@@ -1,7 +1,7 @@
 import pymel.core as pc
 from generalizedCylinder import generalizedCylinder, _pattern
 
-def polyRope(curve, name='polyRope1', parent="|",
+def polyRope(curve, name='polyRope1', parent="|", addControls=True,
         midSamplesPerLength=2.,midTwistRate=2., midWidth=0.75,
         midRebuildSpansMult = 4, midAdjustUVs = True, midCloseEnds=True,
         numSideCyls = 4, showMidCylinder=1, dispCV=True,
@@ -29,7 +29,7 @@ def polyRope(curve, name='polyRope1', parent="|",
 
     # create mid cylinder
     midCyl = generalizedCylinder(curve, name = name + num + 'MidCylinder',
-            parent = maingrp, 
+            parent = maingrp, addControls=addControls,
             samplesPerLength=midSamplesPerLength, tubeSections=numSideCyls,
             twistRate=midTwistRate, brushWidth=midWidth,
             rebuildSpansMult=midRebuildSpansMult, adjustUVs=midAdjustUVs,
