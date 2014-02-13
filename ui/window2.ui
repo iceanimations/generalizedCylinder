@@ -21,7 +21,7 @@
     <item>
      <widget class="QGroupBox" name="groupBox">
       <property name="title">
-       <string>Central Cylinder</string>
+       <string>Mid Cylinder</string>
       </property>
       <property name="flat">
        <bool>false</bool>
@@ -131,7 +131,7 @@
             <double>0.100000000000000</double>
            </property>
            <property name="value">
-            <double>0.500000000000000</double>
+            <double>3.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -181,7 +181,7 @@
             <double>0.100000000000000</double>
            </property>
            <property name="value">
-            <double>0.500000000000000</double>
+            <double>1.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -231,7 +231,7 @@
     <item>
      <widget class="QGroupBox" name="groupBox_2">
       <property name="title">
-       <string>Wrapping Cylinders</string>
+       <string>Side Cylinders</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <property name="spacing">
@@ -444,7 +444,7 @@
             <double>0.100000000000000</double>
            </property>
            <property name="value">
-            <double>0.500000000000000</double>
+            <double>1.000000000000000</double>
            </property>
           </widget>
          </item>

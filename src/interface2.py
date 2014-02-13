@@ -83,17 +83,17 @@ class Window(Form, Base):
 
     def reset(self):
         self.selectionButton.setChecked(True)
-        self.samplesPerLengthBox.setValue(2)
-        self.twistRateBox.setValue(0.5)
-        self.brushWidthBox.setValue(0.5)
+        self.samplesPerLengthBox.setValue(1)
+        self.twistRateBox.setValue(3)
+        self.brushWidthBox.setValue(1)
         self.adjustUVsButton.setChecked(True)
         self.closeEndsButton.setChecked(True)
         self.showButton.setChecked(False)
 
         self.numOfCylindersBox.setValue(4)
-        self.samplesPerLengthBox2.setValue(2)
+        self.samplesPerLengthBox2.setValue(1)
         self.sectionsBox.setValue(4)
         self.twistRateBox2.setValue(1.0)
-        self.widthBox.setValue(0.5)
+        self.widthBox.setValue(1)
         self.adjustUVsButton2.setChecked(True)
         self.closeEndsButton.setChecked(True)
