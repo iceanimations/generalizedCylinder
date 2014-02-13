@@ -54,27 +54,32 @@ class Window(Form, Base):
         qApp.processEvents()
         done = []
         for curve in curves:
-            pr.polyRope(curve, midSamplesPerLength=float(self.samplesPerLengthBox.value()),
-                        midTwistRate=float(self.twistRateBox.value()),
-                        midWidth=float(self.brushWidthBox.value()),
-                        midRebuildSpansMult = 4,
-                        midAdjustUVs=self.adjustUVsButton.isChecked(),
-                        midCloseEnds=self.closeEndsButton.isChecked(),
-                        numSideCyls=int(self.numOfCylindersBox.value()),
-                        showMidCylinder=int(self.showButton.isChecked()),
-                        sideSamplesPerLength=float(self.samplesPerLengthBox2.value()),
-                        sideTwistRate=float(self.twistRateBox2.value()),
-                        sideWidth=float(self.widthBox.value()),
-                        sideRebuildSpansMult=4,
-                        sideAdjustUVs=self.adjustUVsButton2.isChecked(),
-                        sideCloseEnds=self.closeEndsButton2.isChecked(),
-                        sideTubeSections=int(self.sectionsBox.value()))
-            done.append(curve)
-            self.progressBar.setValue(len(done))
-            qApp.processEvents()
-            if self.stop:
-                self.stop = False
-                break
+            try:
+                pr.pc.undoInfo(openChunk = True)
+                pr.polyRope(curve, midSamplesPerLength=float(self.samplesPerLengthBox.value()),
+                            midTwistRate=float(self.twistRateBox.value()),
+                            midWidth=float(self.brushWidthBox.value()),
+                            midRebuildSpansMult = 4,
+                            midAdjustUVs=self.adjustUVsButton.isChecked(),
+                            midCloseEnds=self.closeEndsButton.isChecked(),
+                            numSideCyls=int(self.numOfCylindersBox.value()),
+                            showMidCylinder=int(self.showButton.isChecked()),
+                            sideSamplesPerLength=float(self.samplesPerLengthBox2.value()),
+                            sideTwistRate=float(self.twistRateBox2.value()),
+                            sideWidth=float(self.widthBox.value()),
+                            sideRebuildSpansMult=4,
+                            sideAdjustUVs=self.adjustUVsButton2.isChecked(),
+                            sideCloseEnds=self.closeEndsButton2.isChecked(),
+                            sideTubeSections=int(self.sectionsBox.value()))
+                done.append(curve)
+                self.progressBar.setValue(len(done))
+                qApp.processEvents()
+                if self.stop:
+                    self.stop = False
+                    break
+            finally:
+                pr.pc.undoInfo(closeChunk = True)
+        
         self.stopButton.hide()
         self.createButton.show()
         self.progressBar.hide()
