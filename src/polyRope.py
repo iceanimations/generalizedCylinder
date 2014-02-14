@@ -75,6 +75,15 @@ def polyRope(curve, name='polyRope1', parent="|", addControls=True,
         maingrp.sideWidth >> sc.width
         maingrp.sideTwistRate >> sc.twistRate
         sideCyls.append(sc)
+        
+def addOptionVar(values, key = "polyRopeValues"):
+    """saves all the values on ui"""
+    pc.optionVar(ca = key)
+    for value in values:
+        pc.optionVar(fva = (key, value))
+        
+def optionVars(key = "polyRopeValues"):
+    return pc.optionVar(q=key)
 
 def _main_():
     """test the polyRope function on all selected curves in a maya scene

@@ -2,6 +2,7 @@ import site
 site.addsitedir(r"R:\Pipe_Repo\Users\Qurban\utilities")
 from uiContainer import uic
 from PyQt4.QtGui import *
+from PyQt4.QtCore import Qt
 
 site.addsitedir(r"R:\Pipe_Repo\Users\Hussain\packages")
 import qtify_maya_window as qtfy
@@ -10,6 +11,7 @@ import os.path as osp
 import sys
 
 import polyRope as pr
+reload(pr)
 
 selfPath = sys.modules[__name__].__file__
 rootPath = osp.dirname(osp.dirname(selfPath))
@@ -25,11 +27,35 @@ class Window(Form, Base):
         self.stop = False
         self.progressBar.hide()
         self.stopButton.hide()
+        self.setAttribute(Qt.WA_DeleteOnClose)
 
         #connections
         self.createButton.clicked.connect(self.create)
         self.resetButton.clicked.connect(self.reset)
         self.stopButton.clicked.connect(self.setStop)
+        
+        #method calls
+        self.initUi()
+        
+    def initUi(self):
+        values = pr.optionVars()
+        if values == 0:
+            return
+        
+        self.selectionButton.setChecked(bool(values[0]))
+        self.samplesPerLengthBox.setValue(values[1])
+        self.twistRateBox.setValue(values[2])
+        self.brushWidthBox.setValue(values[3])
+        self.adjustUVsButton.setChecked(bool(values[4]))
+        self.closeEndsButton.setChecked(bool(values[5]))
+        self.showButton.setChecked(bool(values[6]))
+        self.numOfCylindersBox.setValue(int(values[7]))
+        self.samplesPerLengthBox2.setValue(values[8])
+        self.sectionsBox.setValue(int(values[9]))
+        self.twistRateBox2.setValue(values[10])
+        self.widthBox.setValue(values[11])
+        self.adjustUVsButton2.setChecked(bool(values[12]))
+        self.closeEndsButton2.setChecked(bool(values[13]))
 
     def setStop(self):
         self.stop = True
@@ -101,4 +127,24 @@ class Window(Form, Base):
         self.twistRateBox2.setValue(1.0)
         self.widthBox.setValue(1)
         self.adjustUVsButton2.setChecked(True)
-        self.closeEndsButton.setChecked(True)
+        self.closeEndsButton2.setChecked(True)
+        
+    def closeEvent(self, event):
+        self.saveState()
+        
+    def saveState(self):
+        values = [float(self.selectionButton.isChecked()),
+                  self.samplesPerLengthBox.value(),
+                  self.twistRateBox.value(),
+                  self.brushWidthBox.value(),
+                  float(self.adjustUVsButton.isChecked()),
+                  float(self.closeEndsButton.isChecked()),
+                  float(self.showButton.isChecked()),
+                  float(self.numOfCylindersBox.value()),
+                  self.samplesPerLengthBox2.value(),
+                  float(self.sectionsBox.value()),
+                  self.twistRateBox2.value(),
+                  self.widthBox.value(),
+                  float(self.adjustUVsButton2.isChecked()),
+                  float(self.closeEndsButton2.isChecked())]
+        pr.addOptionVar(values)
